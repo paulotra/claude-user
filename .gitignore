@@ -1,0 +1,25 @@
+# macOS
+.DS_Store
+
+# Ephemeral / runtime Claude data
+.last-cleanup
+history.jsonl
+mcp-needs-auth-cache.json
+
+# Runtime directories
+cache/
+debug/
+file-history/
+ide/
+session-env/
+sessions/
+shell-snapshots/
+telemetry/
+backups/
+plugins/
+
+# Project session transcripts (keep only global memory)
+projects/*
+!projects/-Users-paulo--claude/
+projects/-Users-paulo--claude/*
+!projects/-Users-paulo--claude/memory/
