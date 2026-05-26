@@ -85,6 +85,94 @@ The progression is:
 {items.map(item => <Item key={item.id} {...item} />)}
 ```
 
+### SVG icons (React / Next.js only)
+
+> **Apply this section only when the detected stack is React or Next.js.** Skip entirely for Vue projects.
+
+This project uses a custom SVG icon set imported as React components via **SVGR** (`vite-plugin-svgr`).
+
+**File location** — SVGs live in `src/icons/`, named in kebab-case matching their purpose (e.g. `arrow-right.svg`, `close.svg`).
+
+**SVG file requirements** — every SVG in `src/icons/` must have:
+- `fill="currentColor"` — color controlled from outside via Tailwind.
+- `width="1em" height="1em"` — so the icon scales with `font-size` (`text-*` classes).
+
+**Icon component** — never import individual SVGs at call sites. Use a single shared `Icon` component that bulk-imports all SVGs via `import.meta.glob` and resolves by name:
+
+```tsx
+// src/components/ui/Icon.tsx
+import type { FC, SVGProps } from 'react';
+
+const modules = import.meta.glob<{ default: FC<SVGProps<SVGSVGElement>> }>(
+  '/src/icons/*.svg',
+  { eager: true, query: '?react' }
+);
+
+interface IconProps extends SVGProps<SVGSVGElement> {
+  name: string;
+  className?: string;
+}
+
+export default function Icon({ name, className, ...props }: IconProps) {
+  const SvgIcon = modules[`/src/icons/${name}.svg`]?.default;
+  if (!SvgIcon) return null;
+  return <SvgIcon className={className} {...props} />;
+}
+
+export type { IconProps };
+```
+
+**Usage** — pass the kebab-case filename (without `.svg`) as `name`:
+
+```tsx
+<Icon name="arrow-right" className="text-sm" />
+<Icon name="close" className="text-black text-xl" />
+```
+
+**Rules**:
+- **Size via `text-*` font-size utilities** (`text-xs`, `text-sm`, `text-base`, `text-lg`, `text-xl`, etc.) — never `w-*`/`h-*` or `width`/`height` props.
+- **Default color is `text-black`** unless the Figma design specifies otherwise.
+- **Never import SVGs individually** at call sites — always go through `<Icon name="..." />`.
+- Never use `<img src="...svg" />` for icons.
+- Never write inline `<svg>` markup in component files.
+
+```tsx
+// ❌ Bad
+import ArrowRightIcon from '@/icons/arrow-right.svg?react';
+<ArrowRightIcon className="w-5 h-5" />
+
+// ✅ Good
+<Icon name="arrow-right" className="text-black text-sm" />
+```
+
+## Images (both frameworks)
+
+This project uses a **Claude + Figma MCP workflow** — a Figma link will always be provided. Use the Figma MCP to read the design and export assets directly from it.
+
+- **Always import images as modules** — never reference them as raw string paths.
+- **Always export images from Figma at 2x scale** — use the Figma MCP to export at 2x, never 1x.
+- **File naming** — suffix exported files with `@2x` (e.g. `banner@2x.png`, `logo@2x.webp`).
+
+```tsx
+// ❌ Bad
+<img src="/assets/hero.png" />
+
+// ✅ Good
+import heroImage from '@/assets/hero@2x.png';
+<img src={heroImage} alt="Hero" />
+```
+
+In Vue:
+```vue
+<script setup lang="ts">
+import heroImage from '@/assets/hero@2x.png';
+</script>
+
+<template>
+  <img :src="heroImage" alt="Hero" />
+</template>
+```
+
 ## Vue 3 standards
 
 ### Component shape

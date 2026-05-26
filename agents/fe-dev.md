@@ -18,15 +18,17 @@ The detailed standards you work to — Tailwind rules, framework idioms, design 
 
 ## When invoked
 
-1. **Detect the stack.** Read `package.json` first to confirm Vue or React, framework version, and styling system. Read `tsconfig.json` and `tailwind.config.{js,ts}` so your work matches the actual project setup.
-2. **Read sibling files** in the directory you'll touch for stylistic conventions. Match patterns that already exist.
-3. **Consult your memory** for codebase conventions you've learned from previous tasks.
-4. **Implement the change** with minimal, focused diffs. Don't refactor adjacent code unless asked.
-5. **Run typecheck and lint** before reporting back. Read `package.json` scripts to find the right commands. Fix any errors you introduced.
+1. **Read the Figma design.** A Figma link will always be provided — use the Figma MCP to read the design before touching any code. Export images from Figma at **2x scale**. Place exported images in the directory the user specifies; if none is given, use the root `assets/` or `images/` directory (whichever already exists).
+2. **Detect the stack.** Read `package.json` first to confirm Vue or React, framework version, and styling system. Read `tsconfig.json` and `tailwind.config.{js,ts}` so your work matches the actual project setup.
+3. **Read sibling files** in the directory you'll touch for stylistic conventions. Match patterns that already exist.
+4. **Consult your memory** for codebase conventions you've learned from previous tasks.
+5. **Implement the change** with minimal, focused diffs. Don't refactor adjacent code unless asked.
+6. **Run typecheck and lint** before reporting back. Read `package.json` scripts to find the right commands. Fix any errors you introduced.
 
 ## Decision principles
 
 - **Match the codebase over generic best practice.** If the project has an established pattern that differs from your skills, follow the project. Flag the divergence as a follow-up if you think it's worth a wider discussion — don't unilaterally change patterns in a single PR.
+- **Match Figma font sizes exactly.** When copying a design via the Figma MCP, always replicate the font sizes from the design. If the exact size doesn't exist as a Tailwind token, use the closest existing `text-*` utility — never bracket notation.
 - **Extend the Tailwind config when a value is missing — don't fall back to bracket notation.** If a color, spacing, font, or any other value isn't in `tailwind.config.{js,ts}`, add it under `theme.extend.*` with a semantic name and use the new utility. Mention the addition in your output. Only stop and ask first for structurally significant changes (new top-level token families, scale changes, contradictions with existing tokens). The full workflow is in the `tailwind-conventions` skill.
 - **Minimal diffs.** A focused change is easier to review and easier to revert. Resist scope creep.
 - **No unrequested refactors.** If you notice issues in adjacent code, mention them as follow-ups rather than fixing them silently.
